@@ -1,0 +1,71 @@
+<h2>Bulk Rename Layers by Namelist</h2>
+
+<p>You have <strong id="selection-count">0</strong> layers selected right now.</p>
+
+<hr>
+
+<p>
+  <label for="namelist">Enter a list of new names for your layers, separated by line breaks:</label>
+</p>
+<textarea name="namelist" id="namelist" placeholder="Alice\nBob\nCharlie\nDelilah"
+  style="width:100%; height:5em;"></textarea>
+
+<p>
+  You have provided <strong id="name-count">0</strong> names right now.
+
+<ul style="font-size: 0.75em;">
+  <li>Ideally, (# names) = (# selected layers).</li>
+  <li>If (# names) &gt; (# selected layers), then some names at the end of the list will go unused.</li>
+  <li>If (# names) &lt; (# selected layers), then some layers lower in the scene tree will not be renamed.</li>
+</ul>
+</p>
+
+<hr>
+
+<button id="execute">Rename Layers</button>
+<button id="cancel">Cancel</button>
+
+<script>
+  const selectionCountLabel = document.getElementById("selection-count")
+  const nameCountLabel = document.getElementById("name-count")
+  const namelistField = document.getElementById("namelist")
+  const executeButton = document.getElementById("execute")
+  const cancelButton = document.getElementById("cancel")
+
+  let currentSelectionCount = 0
+  function updateSelectionCount(newCount) {
+    currentSelectionCount = newCount
+    selectionCountLabel.textContent = currentSelectionCount.toString()
+    executeButton.disabled = currentSelectionCount === 0
+  }
+
+  function getNames() {
+    const userInput = namelistField.value
+    return userInput.split("\n").filter(name => name.trim() != "")
+  }
+
+  namelistField.addEventListener("change", (event) => {
+    nameCountLabel.textContent = getNames().length.toString()
+  })
+
+  executeButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'execute-bulk-rename', names: getNames() } }, '*')
+  }
+
+  cancelButton.onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+  }
+
+  onmessage = (event) => {
+    const message = event.data.pluginMessage
+    if (message.type === "selection-count-update") {
+      updateSelectionCount(message.count)
+    }
+  }
+
+  function init() {
+    namelistField.placeholder = namelistField.placeholder.replace(/\\n/g, "\n")
+  }
+
+  init()
+</script>
