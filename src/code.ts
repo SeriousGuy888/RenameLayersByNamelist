@@ -4,7 +4,7 @@
 // full browser environment (See https://www.figma.com/plugin-docs/how-plugins-run).
 
 // This shows the HTML page in "ui.html".
-figma.showUI(__html__, { width: 350, height: 600, themeColors: true })
+figma.showUI(__html__, { width: 350, height: 500, themeColors: true })
 postSelectionCountUpdate()
 
 // Calls to "parent.postMessage" from within the HTML page will trigger this

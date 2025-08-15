@@ -3,6 +3,10 @@ Inlined style tag because not allowed to link a separate stylesheet.
 https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
 -->
 <style>
+  * {
+    margin: 0;
+  }
+
   body {
     font-family: Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--figma-color-bg);
@@ -14,6 +18,7 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
     text-align: center;
     text-wrap: balance;
     font-size: 1.5rem;
+    margin-block-end: 1rem;
   }
 
   strong {
@@ -36,8 +41,10 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
     border-radius: 8px;
     padding-inline: 1ch;
     padding-block: 0.5em;
+    margin-block: 1rem;
     min-width: 100%;
-    min-height: 6.5em;
+    max-width: 100%;
+    min-height: 9em;
     outline: none;
 
     font-size: 0.75rem;
@@ -50,6 +57,25 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
     &:focus {
       border-color: var(--figma-color-border-selected);
     }
+  }
+
+  #counts {
+    display: grid;
+    gap: 0;
+    margin-block-end: 1rem;
+
+    & p {
+      margin: 0;
+    }
+  }
+
+  ul {
+    font-size: 0.75em;
+    padding-left: 4ch;
+  }
+
+  li.case-active {
+    color: var(--figma-color-text-selected);
   }
 
   .button-section {
@@ -93,24 +119,24 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
 
 <h1>Bulk Rename Layers by Name List</h1>
 
-<p>You have <strong id="selection-count">0</strong> layers selected right now.</p>
-
-<hr>
 
 <p>
   <label for="namelist">Enter a list of new names for your layers, separated by line breaks:</label>
 </p>
-<textarea name="namelist" id="namelist" placeholder="Alice\nBob\nCharlie\nDelilah"></textarea>
+<textarea name="namelist" id="namelist" placeholder="Alice\nBob\nCharlie"></textarea>
 
-<p>
-  You have provided <strong id="name-count">0</strong> names right now.
+<section id="counts">
+  <p>You have provided <strong id="name-count">0</strong> names right now.</p>
+  <p>You have selected <strong id="selection-count">0</strong> layers right now.</p>
+</section>
 
-<ul style="font-size: 0.75em;">
-  <li>Ideally, (# names) = (# selected layers).</li>
-  <li>If (# names) &gt; (# selected layers), then some names at the end of the list will go unused.</li>
-  <li>If (# names) &lt; (# selected layers), then some layers lower in the scene tree will not be renamed.</li>
+<ul>
+  <li id="case-equal">Ideally, (# names) = (# selected layers). Each selected layer will get one name.</li>
+  <li id="case-more-names">If (# names) &gt; (# selected layers), then some names at the end of the list will go unused.
+  </li>
+  <li id="case-more-layers">If (# names) &lt; (# selected layers), then some layers lower in the scene tree will not be
+    renamed.</li>
 </ul>
-</p>
 
 <section class="button-section">
   <button id="execute">Rename Layers</button>
@@ -124,11 +150,53 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
   const executeButton = document.getElementById("execute")
   const cancelButton = document.getElementById("cancel")
 
+  const caseEqual = document.getElementById("case-equal")
+  const caseMoreNames = document.getElementById("case-more-names")
+  const caseMoreLayers = document.getElementById("case-more-layers")
+
   let currentSelectionCount = 0
+  let currentNameCount = 0
+
+  function updateUiInGeneral() {
+    executeButton.disabled = currentSelectionCount === 0 || currentNameCount === 0
+
+    caseEqual.classList.remove("case-active")
+    caseMoreNames.classList.remove("case-active")
+    caseMoreLayers.classList.remove("case-active")
+
+    if (currentSelectionCount === 0 || currentNameCount === 0) {
+      return
+    }
+
+    if (currentSelectionCount === currentNameCount) {
+      caseEqual.classList.add("case-active")
+    }
+    if (currentNameCount > currentSelectionCount) {
+      caseMoreNames.classList.add("case-active")
+    }
+    if (currentSelectionCount > currentNameCount) {
+      caseMoreLayers.classList.add("case-active")
+    }
+  }
+
   function updateSelectionCount(newCount) {
+    if (newCount === currentSelectionCount) {
+      return
+    }
+
     currentSelectionCount = newCount
     selectionCountLabel.textContent = currentSelectionCount.toString()
-    executeButton.disabled = currentSelectionCount === 0
+    updateUiInGeneral()
+  }
+
+  function updateNameCount(newCount) {
+    if (newCount === currentNameCount) {
+      return
+    }
+
+    currentNameCount = newCount
+    nameCountLabel.textContent = currentNameCount.toString()
+    updateUiInGeneral()
   }
 
   function getNames() {
@@ -137,7 +205,7 @@ https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
   }
 
   namelistField.addEventListener("keyup", (event) => {
-    nameCountLabel.textContent = getNames().length.toString()
+    updateNameCount(getNames().length)
   })
 
   executeButton.onclick = () => {
