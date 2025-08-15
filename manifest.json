@@ -1,5 +1,5 @@
 {
-  "name": "RenameLayersByNamelist",
+  "name": "Bulk Rename Layers by Name List",
   "id": "1536059228570883278",
   "api": "1.0.0",
   "main": "src/code.js",
