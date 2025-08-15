@@ -2,14 +2,14 @@
   "name": "RenameLayersByNamelist",
   "id": "1536059228570883278",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "src/code.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",
   "editorType": [
     "figma"
   ],
-  "ui": "ui.html",
+  "ui": "src/ui.html",
   "networkAccess": {
     "allowedDomains": [
       "none"

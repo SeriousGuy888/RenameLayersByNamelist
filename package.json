@@ -2,7 +2,7 @@
   "name": "rename-layers-by-namelist",
   "version": "1.0.0",
   "description": "Given a list of names, rename all selected layers with names from that list.",
-  "main": "code.js",
+  "main": "src/code.js",
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
