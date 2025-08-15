@@ -1,4 +1,97 @@
-<h2>Bulk Rename Layers by Namelist</h2>
+<!--
+Inlined style tag because not allowed to link a separate stylesheet. 
+https://forum.figma.com/ask-the-community-7/linking-css-to-ui-html-31363
+-->
+<style>
+  body {
+    font-family: Inter, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--figma-color-bg);
+    color: var(--figma-color-text);
+    padding: 1rem;
+  }
+
+  h1 {
+    text-align: center;
+    text-wrap: balance;
+    font-size: 1.5rem;
+  }
+
+  strong {
+    font-weight: 900;
+    color: var(--figma-color-text-success);
+  }
+
+  textarea,
+  button {
+    font-family: inherit;
+    font-size: inherit;
+    background-color: inherit;
+    color: inherit;
+    border: inherit;
+  }
+
+  textarea {
+    background-color: var(--figma-color-bg-secondary);
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding-inline: 1ch;
+    padding-block: 0.5em;
+    min-width: 100%;
+    min-height: 6.5em;
+    outline: none;
+
+    font-size: 0.75rem;
+
+
+    &:hover {
+      border-color: var(--figma-color-border);
+    }
+
+    &:focus {
+      border-color: var(--figma-color-border-selected);
+    }
+  }
+
+  .button-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-size: 1rem;
+    gap: 0.5rem;
+    margin-block-start: 1rem;
+  }
+
+  button {
+    padding: 0.5em 1ch;
+    cursor: pointer;
+    border-radius: 8px;
+
+    background-color: var(--figma-color-bg-brand);
+    color: white;
+
+    &:hover,
+    &:focus {
+      background-color: var(--figma-color-bg-brand-hover);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: var(--figma-color-bg-disabled);
+      color: var(--figma-color-text-secondary);
+    }
+  }
+
+  button#cancel {
+    background-color: var(--figma-color-bg-secondary);
+    color: var(--figma-color-text);
+
+    &:hover,
+    &:focus {
+      background-color: var(--figma-color-bg-tertiary);
+    }
+  }
+</style>
+
+<h1>Bulk Rename Layers by Name List</h1>
 
 <p>You have <strong id="selection-count">0</strong> layers selected right now.</p>
 
@@ -7,8 +100,7 @@
 <p>
   <label for="namelist">Enter a list of new names for your layers, separated by line breaks:</label>
 </p>
-<textarea name="namelist" id="namelist" placeholder="Alice\nBob\nCharlie\nDelilah"
-  style="width:100%; height:5em;"></textarea>
+<textarea name="namelist" id="namelist" placeholder="Alice\nBob\nCharlie\nDelilah"></textarea>
 
 <p>
   You have provided <strong id="name-count">0</strong> names right now.
@@ -20,10 +112,10 @@
 </ul>
 </p>
 
-<hr>
-
-<button id="execute">Rename Layers</button>
-<button id="cancel">Cancel</button>
+<section class="button-section">
+  <button id="execute">Rename Layers</button>
+  <button id="cancel">Cancel</button>
+</section>
 
 <script>
   const selectionCountLabel = document.getElementById("selection-count")
@@ -44,7 +136,7 @@
     return userInput.split("\n").filter(name => name.trim() != "")
   }
 
-  namelistField.addEventListener("change", (event) => {
+  namelistField.addEventListener("keyup", (event) => {
     nameCountLabel.textContent = getNames().length.toString()
   })
 
